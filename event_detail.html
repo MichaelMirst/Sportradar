@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Details</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 50px; }
+  h1 { color: #4285f4; }
+  p { font-size: 1.2em; }
+</style>
 </head>
 <body>
-    
+<h1 id="event-name">Event Name</h1>
+<p id="event-date">Date: </p>
+<p id="event-details">Details: </p>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const eventId = parseInt(urlParams.get('eventId'));
+
+// Same events array (or you can fetch it from a JSON file)
+const events = [
+  { "id": 1, "date": "2025-11-03", "name": "Project Deadline", "details": "Submit the final project report to the manager." },
+  { "id": 2, "date": "2025-11-12", "name": "Team Meeting", "details": "Monthly team meeting in Conference Room A." },
+  { "id": 3, "date": "2025-11-18", "name": "Birthday Party", "details": "Celebrating John's birthday at 7 PM." },
+  { "id": 4, "date": "2025-11-25", "name": "Doctor Appointment", "details": "Annual health check-up at 10 AM." }
+];
+
+const event = events.find(e => e.id === eventId);
+if(event) {
+  document.getElementById('event-name').textContent = event.name;
+  document.getElementById('event-date').textContent = 'Date: ' + event.date;
+  document.getElementById('event-details').textContent = 'Details: ' + event.details;
+} else {
+  document.body.innerHTML = "<h1>Event not found</h1>";
+}
+</script>
 </body>
 </html>
