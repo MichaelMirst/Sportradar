@@ -11,7 +11,8 @@
       document.getElementById('event-date').textContent = `Date: ${match.dateVenue || 'N/A'}`;
       document.getElementById('event-time').textContent = `Time: ${match.timeVenueUTC || 'N/A'}`;
       document.getElementById('event-sport').textContent = `Sport: ${match.sport || 'N/A'}`;
-
+    
+    // Construction of the format for the teams display
       let teams = '';
       if (match.homeTeam && match.awayTeam) {
         teams = `${match.homeTeam.officialName} vs ${match.awayTeam.officialName}`;
@@ -23,6 +24,12 @@
         teams = 'N/A';
       }
       document.getElementById('event-teams').textContent = `Teams: ${teams}`;
-    } else {
-      document.body.innerHTML = "<p>Event not found.</p>";
-    }
+    // In case the event is not found, we provide a link back to the main webpage (calendar_view.html)
+    } else {document.body.innerHTML = `
+    <p>Event not found.</p>
+    <button id="backBtn">Go Back to Calendar</button>
+  `;
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = 'calendar_view.html';
+  });
+}

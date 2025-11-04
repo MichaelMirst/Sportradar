@@ -1,5 +1,6 @@
 const form = document.getElementById('addEventForm');
 
+// Reads form data 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -11,7 +12,7 @@ form.addEventListener('submit', function(e) {
     awayTeam: { officialName: document.getElementById('awayTeam').value || '' }
   };
 
-  // Save in localStorage
+  // Save the eventin localStorage
   let tempEvents = JSON.parse(localStorage.getItem('tempEvents') || '[]');
   tempEvents.push(newEvent);
   localStorage.setItem('tempEvents', JSON.stringify(tempEvents));
