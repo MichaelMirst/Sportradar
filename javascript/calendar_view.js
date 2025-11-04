@@ -7,7 +7,7 @@ fetch('data/events.json')
     // Map events to a dictionary keyed by day of November 2025
     const eventsByDay = {};
 
-    matches.forEach(match => {
+    matches.forEach((match, index) => { // <-- keep index
       const date = new Date(match.dateVenue);
       if (date.getMonth() === 10 && date.getFullYear() === 2025) { // November 2025
         const day = date.getDate();
@@ -25,20 +25,22 @@ fetch('data/events.json')
         if (!eventsByDay[day]) {
           eventsByDay[day] = [];
         }
-        eventsByDay[day].push(eventName);
+
+        // Pass the match index to the details page
+        eventsByDay[day].push({ name: eventName, index });
       }
     });
 
-    // Generate the calendar
+    // Store all matches globally for use in details page
+    localStorage.setItem('matches', JSON.stringify(matches));
+
     createCalendar(eventsByDay);
   })
   .catch(error => console.error('Error loading JSON:', error));
 
-// Function to create the calendar
 function createCalendar(events) {
   const calendar = document.getElementById('calendar');
 
-  // Add weekday headers
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   weekdays.forEach(day => {
     const header = document.createElement('div');
@@ -47,28 +49,32 @@ function createCalendar(events) {
     calendar.appendChild(header);
   });
 
-  // November 2025 starts on Saturday
-  const firstDay = new Date(2025, 10, 1).getDay(); 
+  const firstDay = new Date(2025, 10, 1).getDay();
   const totalDays = 30;
-
-  // Add blank cells before the first day
+// Se despliega los detalles del calendario 
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement('div');
     emptyCell.className = 'day';
     calendar.appendChild(emptyCell);
   }
 
-  // Add days with events
   for (let day = 1; day <= totalDays; day++) {
     const dayCell = document.createElement('div');
     dayCell.className = 'day';
     dayCell.innerHTML = `<strong>${day}</strong>`;
 
     if (events[day]) {
-      events[day].forEach(event => {
+      events[day].forEach(eventObj => {
         const eventDiv = document.createElement('div');
         eventDiv.className = 'event';
-        eventDiv.textContent = event;
+
+        const link = document.createElement('a');
+        link.textContent = eventObj.name;
+        link.href = `event_detail.html?index=${eventObj.index}`;
+        link.style.textDecoration = 'none';
+        link.style.color = 'blue';
+
+        eventDiv.appendChild(link);
         dayCell.appendChild(eventDiv);
       });
     }
