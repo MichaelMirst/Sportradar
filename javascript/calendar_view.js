@@ -1,46 +1,34 @@
-// Fetch events from external JSON file
+// Load JSON and display the calendar with temporary events
+let jsonEvents = [];
+let tempEvents = JSON.parse(localStorage.getItem('tempEvents') || '[]');
+
 fetch('data/events.json')
   .then(response => response.json())
   .then(data => {
-    const matches = data.data;
-
-    // Map events to a dictionary keyed by day of November 2025
-    const eventsByDay = {};
-
-    matches.forEach((match, index) => { // <-- keep index
-      const date = new Date(match.dateVenue);
-      if (date.getMonth() === 10 && date.getFullYear() === 2025) { // November 2025
-        const day = date.getDate();
-
-        // Use officialName (prefer homeTeam, fallback to awayTeam)
-        let eventName = '';
-        if (match.homeTeam && match.homeTeam.officialName) {
-          eventName = match.homeTeam.officialName;
-        } else if (match.awayTeam && match.awayTeam.officialName) {
-          eventName = match.awayTeam.officialName;
-        } else {
-          eventName = "Event";
-        }
-
-        if (!eventsByDay[day]) {
-          eventsByDay[day] = [];
-        }
-
-        // Pass the match index to the details page
-        eventsByDay[day].push({ name: eventName, index });
-      }
-    });
-
-    // Store all matches globally for use in details page
-    localStorage.setItem('matches', JSON.stringify(matches));
-
-    createCalendar(eventsByDay);
+    jsonEvents = data.data;
+    displayCalendar();
   })
   .catch(error => console.error('Error loading JSON:', error));
 
-function createCalendar(events) {
+function displayCalendar() {
   const calendar = document.getElementById('calendar');
+  calendar.innerHTML = ''; // Clear previous calendar
 
+  const allEvents = jsonEvents.concat(tempEvents);
+
+  // Map events by day for November 2025
+  const eventsByDay = {};
+  allEvents.forEach((match, index) => {
+    const date = new Date(match.dateVenue);
+    if (date.getMonth() === 10 && date.getFullYear() === 2025) { // November
+      const day = date.getDate();
+      let eventName = match.homeTeam?.officialName || match.awayTeam?.officialName || match.originCompetitionName || "Event";
+      if (!eventsByDay[day]) eventsByDay[day] = [];
+      eventsByDay[day].push({ name: eventName, index });
+    }
+  });
+
+  // Render calendar headers
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   weekdays.forEach(day => {
     const header = document.createElement('div');
@@ -49,22 +37,23 @@ function createCalendar(events) {
     calendar.appendChild(header);
   });
 
+  // Render empty cells before first day
   const firstDay = new Date(2025, 10, 1).getDay();
-  const totalDays = 30;
-// Se despliega los detalles del calendario 
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement('div');
     emptyCell.className = 'day';
     calendar.appendChild(emptyCell);
   }
 
+  // Render all days
+  const totalDays = 30;
   for (let day = 1; day <= totalDays; day++) {
     const dayCell = document.createElement('div');
     dayCell.className = 'day';
     dayCell.innerHTML = `<strong>${day}</strong>`;
 
-    if (events[day]) {
-      events[day].forEach(eventObj => {
+    if (eventsByDay[day]) {
+      eventsByDay[day].forEach(eventObj => {
         const eventDiv = document.createElement('div');
         eventDiv.className = 'event';
 
@@ -82,3 +71,4 @@ function createCalendar(events) {
     calendar.appendChild(dayCell);
   }
 }
+

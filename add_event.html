@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="design.css">
-    <script src="add_event.js" defer></script>
+   <style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  label { display: block; margin-top: 10px; }
+  input, select { width: 100%; padding: 5px; margin-top: 5px; }
+  button { margin-top: 15px; padding: 10px; }
+</style>
+    <script src="javascript/add_event.js" defer></script>
 </head>
 <body>
     
@@ -14,10 +20,28 @@
     <a href="calendar_view.html">Calendar View</a>
     </nav>
     <h1>Add Event</h1>
-    <form id ="event-form">
-        <label for ="event-name">Event Name:</label>
-        <input type="text" id="event-name" name="event-name" required>
+    <form id="addEventForm">
+  <label>Date (YYYY-MM-DD):
+    <input type="date" id="dateVenue" required>
+  </label>
+  <label>Time (HH:MM):
+    <input type="time" id="timeVenueUTC">
+  </label>
+  <label>Sport:
+    <input type="text" id="sport">
+  </label>
+  <label>Home Team Official Name:
+    <input type="text" id="homeTeam">
+  </label>
+  <label>Away Team Official Name:
+    <input type="text" id="awayTeam">
+  </label>
+  <button type="submit">Add Event</button>
+</form>
 
+</body>
+</html>
+      
     
     
 
